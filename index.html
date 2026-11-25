@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GIGA · Зелёная волна</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0d1117; --panel:#131a24; --panel2:#182331; --line:#23324a;
+    --green:#22c55e; --green-d:#16a34a; --green-l:#86efac; --green-dim:#1f7a3d;
+    --text:#e6edf5; --muted:#8b9bb0; --accent:#34d399;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-serif;overflow-x:hidden}
+  body{
+    background:
+      radial-gradient(1200px 500px at 80% -10%, rgba(34,197,94,.08), transparent 60%),
+      radial-gradient(900px 500px at 10% 0%, rgba(52,211,153,.06), transparent 55%),
+      var(--bg);
+  }
+  header{padding:32px 28px 8px;max-width:1280px;margin:0 auto}
+  .eyebrow{font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--green-l)}
+  h1{font-size:clamp(28px,5vw,52px);line-height:1.05;margin:10px 0 6px;font-weight:900;letter-spacing:-.01em}
+  h1 .dot{color:var(--green)}
+  .lede{max-width:62ch;color:var(--muted);font-size:15px;line-height:1.5}
+  .tags{margin-top:14px;display:flex;gap:8px;flex-wrap:wrap}
+  .tag{font-family:'JetBrains Mono',monospace;font-size:11px;padding:3px 10px;border:1px solid var(--line);border-radius:999px;color:var(--green-l)}
+  main{max-width:1280px;margin:0 auto;padding:18px 28px 48px}
+  .stage{position:relative;border:1px solid var(--line);border-radius:16px;overflow:hidden;background:#0a0f15}
+  #city{display:block;width:100%;height:320px}
+  #roll{display:block;width:100%;height:170px;background:#0b1119}
+  .transport{padding:16px 20px 18px;border-top:1px solid var(--line);background:var(--panel)}
+  .row{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+  .bigbtn{display:inline-flex;align-items:center;gap:10px;height:46px;padding:0 22px;border-radius:12px;border:none;background:var(--green);color:#06231a;font-weight:800;font-size:15px;cursor:pointer;box-shadow:0 6px 24px rgba(34,197,94,.25)}
+  .bigbtn:hover{filter:brightness(1.08)}
+  .bigbtn svg{width:20px;height:20px}
+  .flatbtn{height:40px;padding:0 14px;border-radius:10px;border:1px solid var(--line);background:var(--panel2);color:var(--text);font-weight:600;font-size:13px;cursor:pointer}
+  .flatbtn.active{background:var(--green-d);border-color:var(--green-dim);color:#eafff2}
+  .flatbtn:disabled{opacity:.4;cursor:not-allowed}
+  .seg{display:flex;gap:6px}
+  .time{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--muted);min-width:110px}
+  .seek{position:relative;height:22px;flex:1;min-width:220px;cursor:pointer}
+  .seek input[type=range]{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;margin:0}
+  .seek .track{position:absolute;inset:8px 0;border-radius:999px;background:var(--line)}
+  .seek .fill{position:absolute;left:8px;top:8px;bottom:8px;border-radius:999px;background:linear-gradient(90deg,var(--green-d),var(--green));width:0%}
+  .seek .ticks{position:absolute;inset:0;display:flex}
+  .seek .tick{flex:1;border-right:1px dashed var(--line);height:100%}
+  .seek .thumb{position:absolute;top:50%;width:14px;height:14px;border-radius:50%;background:var(--green);transform:translate(-50%,-50%);left:0%}
+
+  .mixer{margin-top:18px;border:1px solid var(--line);border-radius:16px;overflow:hidden;background:var(--panel)}
+  .mixer-head{padding:14px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line)}
+  .mixer-head h2{font-size:13px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;font-family:'JetBrains Mono',monospace;color:var(--green-l)}
+  .mixer-legend{font-size:12px;color:var(--muted)}
+  .tracks{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:1px;background:var(--line)}
+  .tr{display:flex;align-items:center;gap:12px;padding:10px 14px;background:var(--panel2);min-width:0}
+  .tr .name{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text);min-width:96px}
+  .tr .sw{display:flex;gap:4px;flex-shrink:0}
+  .tr button{height:30px;padding:0 10px;border-radius:8px;border:1px solid var(--line);background:transparent;color:var(--muted);font-size:11px;font-weight:700;cursor:pointer;font-family:'JetBrains Mono',monospace}
+  .tr button.mute.active{background:#3b1d2e;color:#ffb4c2;border-color:#7a2a44}
+  .tr button.solo.active{background:#1d3b2b;color:#b9ffe0;border-color:#2f7a54}
+  .tr input[type=range]{flex:1;min-width:0;accent-color:var(--green)}
+
+  .downloads{margin-top:18px;display:flex;gap:10px;flex-wrap:wrap}
+  .dl{display:inline-flex;align-items:center;gap:8px;height:40px;padding:0 16px;border:1px solid var(--line);border-radius:10px;background:var(--panel2);color:var(--text);font-size:13px;font-weight:600;text-decoration:none}
+  .dl svg{width:16px;height:16px}
+
+  .note{max-width:640px;width:calc(100% - 32px);margin:0 auto 24px;text-align:center;font-size:12px;color:var(--muted);background:rgba(13,17,23,.7);padding:8px 16px;border-radius:999px;border:1px solid var(--line);pointer-events:none;opacity:.85}
+  @media(max-width:640px){
+    header{padding:20px 16px 4px}
+    h1{font-size:28px}
+    #city,#roll{height:200px}
+    .transport{padding:12px 14px 14px}
+    .bigbtn{height:40px;padding:0 14px;font-size:13px}
+    .time{min-width:84px}
+    .tr .name{min-width:72px;font-size:11px}
+    .mixer-head{align-items:flex-start;flex-direction:column;gap:8px}
+    .mixer-head h2{margin:0}
+  }
+</style>
+  <script type="module" crossorigin src="./assets/index-Bd32Ydxv.js?v=mixer-2"></script>
+</head>
+<body>
+<header>
+  <div class="eyebrow">Кейс GIGA · Музыкальная витрина</div>
+  <h1>GIGA&nbsp;<span class="dot">·</span>&nbsp;Зелёная волна</h1>
+  <p class="lede">Обычный российский город просыпается и превращается в музыку: щелчки турникета, колёсный ритм, мягкий электронный сигнал и щипковый тембр с далёким народным оттенком. 7 партий, 105 BPM, ре минор с дорийским светом. Вся музыка сочинена и собрана в Cadenza — без внешних сэмплов и генераторов.</p>
+  <div class="tags"><span class="tag">105 BPM</span><span class="tag">D minor · dorian</span><span class="tag">36 тактов · 82 с</span><span class="tag">7 дорожек</span><span class="tag">Cadenza · MCP</span></div>
+</header>
+
+<main>
+  <section class="stage">
+    <canvas id="city"></canvas>
+    <canvas id="roll"></canvas>
+  </section>
+
+  <div class="transport">
+    <div class="row">
+      <button class="bigbtn" id="playBtn" title="Пробел тоже работает">
+        <svg viewBox="0 0 20 20" id="playIcon"><path d="M3 2l14 8-14 8z" fill="currentColor"/></svg>
+        <svg viewBox="0 0 20 20" style="display:none" id="pauseIcon"><path d="M3 2h5v16H3zM12 2h5v16h-5z" fill="currentColor"/></svg>
+        <span id="playLabel">Слушать</span>
+      </button>
+      <div class="seg">
+        <button class="flatbtn active" data-mode="master">Мастер</button>
+        <button class="flatbtn" data-mode="stems">Дорожки</button>
+      </div>
+      <div class="seg">
+        <button class="flatbtn active" data-mode="final" id="finalBtn">Финал</button>
+        <button class="flatbtn" data-mode="draft" id="draftBtn">Черновик</button>
+      </div>
+      <div class="time"><span id="cur">0:00</span> / <span id="dur">0:00</span></div>
+    </div>
+    <div class="row" style="margin-top:12px">
+      <div class="seek" id="seek">
+        <div class="ticks" id="seekTicks"></div>
+        <div class="track"></div>
+        <div class="fill"></div>
+        <div class="thumb"></div>
+        <input type="range" id="seekInput" min="0" max="1" step="0.001" value="0">
+      </div>
+    </div>
+  </div>
+
+  <section class="mixer">
+    <div class="mixer-head">
+      <h2>Дорожки</h2>
+      <span class="mixer-legend">mute — убрать партию · solo — оставить только её. Микшер работает в режиме «Дорожки».</span>
+    </div>
+    <div class="tracks" id="tracks"></div>
+  </section>
+
+  <nav class="downloads">
+    <a class="dl" href="green-wave.mid" download>MIDI проекта</a>
+    <a class="dl" href="green-wave.cdz" download>Проект .cdz</a>
+    <a class="dl" href="audio/green-wave-web.mp3" download>Готовый трек (MP3)</a>
+    <a class="dl" href="audio/green-wave-draft.mp3" download>Черновик (MP3)</a>
+  </nav>
+</main>
+
+<div class="note">Переключение «Мастер ↔ Дорожки» и «Черновик ↔ Финал» сохраняет позицию. Сумма дорожек ≠ побитовый мастер: в проекте есть общая шина (реверб, дилэй, сатуратор, лимитер).</div>
+
+</body>
+</html>
